@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\UserApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// public routes
+// Route::resource('users', UserApiController::class);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/users', [UserApiController::class, 'index']);
+Route::get('/users/{id}', [UserApiController::class, 'show']);
+Route::get('/users/search/{name}', [UserApiController::class, 'search']);
+
+
+// Route::get('/users', [UserApiController::class, 'index']);
+
+// Route::post('/users', [UserApiController::class, 'store']);
+
+// protected routes
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    // Route::get('/users/search/{name}', [UserApiController::class, 'search']);
+    Route::post('/users', [UserApiController::class, 'store']);
+    Route::put('/users/{id}', [UserApiController::class, 'update']);
+    Route::delete('/users/{id}', [UserApiController::class, 'destroy']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
